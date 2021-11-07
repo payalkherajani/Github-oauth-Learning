@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import GithubIcon from "mdi-react/GithubIcon";
-import { useLocation } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
+import axios from 'axios';
+
 
 function useQuery() {
     const { search } = useLocation();
@@ -11,6 +13,7 @@ function useQuery() {
 const Login = () => {
 
     let query = useQuery();
+    const navigate = useNavigate();
 
     const [data, setData] = useState({
         isUserLoggedIn: false,
@@ -18,14 +21,25 @@ const Login = () => {
         status: 'Initial'
     });
 
-    const loginUserFromBackend = async () => {
+    const loginUserFromBackend = async (code: string) => {
 
+        const response = await axios.post('http://localhost:5000/authenticate', {
+            'code': code
+        });
+
+        if (response.status === 200) {
+            const { data } = response;
+            const accessToken = data.token.split("access_token=");
+            localStorage.setItem('token', accessToken[1]);
+            //need to set dispatch
+            navigate('/home');
+        }
     };
 
     useEffect(() => {
         const code = query.get("code");
         if (code) {
-            loginUserFromBackend();
+            loginUserFromBackend(code);
         }
     }, [data]);
 
