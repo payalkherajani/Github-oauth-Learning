@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router';
 const Home = () => {
 
     const [user, setUser] = useState({});
+    const [repos, setRepos] = useState([]);
+
 
     const navigate = useNavigate();
 
@@ -25,7 +27,15 @@ const Home = () => {
         }
     }, []);
 
-    console.log(user, "user");
+    const getUserReposFromBackend = async () => {
+        const access_token = localStorage.getItem('token');
+        const response = await axios.get(`http://localhost:5000/allrepos/${access_token}`);
+        console.log(response, "repos");
+    };
+
+    useEffect(() => {
+        getUserReposFromBackend();
+    }, []);
 
     return (
         <div>
