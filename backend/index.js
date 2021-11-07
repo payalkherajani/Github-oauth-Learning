@@ -29,5 +29,25 @@ app.post('/authenticate', async (req, res) => {
     }
 })
 
+app.get('/userinfo/:access_token', async (req, res) => {
+    try {
+
+        const { access_token } = req.params
+        const response = await axios.get(`https://api.github.com/user`, {
+            headers: {
+                Authorization: `token ${access_token}`,
+            },
+        })
+        if (response.status === 200) {
+            const { data } = response
+            return res.status(200).json({ success: false, message: 'Success', userInfo: data })
+        }
+        return res.status(400).json({ success: false, message: 'Something went wrong' })
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({ success: false, message: 'Server Error' })
+    }
+})
+
 const PORT = process.env.PORT || 5000
 app.listen(PORT, console.log(`Server running on port ${PORT}`))

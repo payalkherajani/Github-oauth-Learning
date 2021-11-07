@@ -29,8 +29,9 @@ const Login = () => {
 
         if (response.status === 200) {
             const { data } = response;
-            const accessToken = data.token.split("access_token=");
-            localStorage.setItem('token', accessToken[1]);
+            const accessToken = data.token.split("access_token=")[1].split("&scope")[0];
+            console.log(accessToken, "33");
+            localStorage.setItem('token', accessToken);
             //need to set dispatch
             navigate('/home');
         }
