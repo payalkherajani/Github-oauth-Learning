@@ -19,6 +19,17 @@ export type User = {
     public_repos: number;
     total_private_repos: number;
 };
+
+const divStyle = {
+
+};
+
+
+const containerStyle = {
+    maxWidth: '1280px',
+    margin: '0 auto',
+};
+
 const Home = () => {
 
     const [user, setUser] = useState<User>({
@@ -95,9 +106,11 @@ const Home = () => {
         setEditModal(false);
     };
 
+    console.log("hello");
+
 
     return (
-        <div>
+        <div style={containerStyle}>
             Home
             <div>
                 <button onClick={() => localStorage.clear()}>Logout</button>
@@ -105,7 +118,12 @@ const Home = () => {
             {
                 repos.map((onerepo: Repo, index: number) => {
                     return (
-                        <div key={index} style={{ border: '1px solid red' }}>
+                        <div key={index} style={{
+                            color: 'blue', height: '250px', textAlign: 'center',
+                            padding: '5px 10px',
+                            background: '#eee',
+                            marginTop: '15px'
+                        }}>
                             <div>Descriptiion: {onerepo.description}</div>
                             <div>Name: {onerepo.name} </div>
                             <div> Visibility{onerepo.visibility} </div>

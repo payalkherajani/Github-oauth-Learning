@@ -48,7 +48,7 @@ const Login = () => {
         <div>
             <a
                 className="login-link"
-                href={`https://github.com/login/oauth/authorize?scope=user&client_id=${process.env.REACT_APP_CLIENT_ID}&redirect_uri=${process.env.REACT_APP_REDIRECT_URI}`}
+                href={`https://github.com/login/oauth/authorize?scope=repo,user&client_id=${process.env.REACT_APP_CLIENT_ID}&redirect_uri=${process.env.REACT_APP_REDIRECT_URI}`}
                 onClick={() => setData({ ...data, status: 'In-Process' })}
             >
                 <GithubIcon />
