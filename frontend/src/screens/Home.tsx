@@ -1,11 +1,32 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router';
 
+
+export type Repo = {
+    id: number;
+    description: string | null;
+    name: string;
+    private: boolean;
+    visibility: string;
+    stargazers_count: number;
+    watchers_count: number;
+    node_id: string;
+};
+
+export type User = {
+    public_repos: number;
+    total_private_repos: number;
+};
 const Home = () => {
 
-    const [user, setUser] = useState({});
+    const [user, setUser] = useState<User>({
+        public_repos: 0,
+        total_private_repos: 0
+    });
     const [repos, setRepos] = useState([]);
+    const [page, setPage] = useState(1);
+    const loader = useRef(null);
 
 
     const navigate = useNavigate();
@@ -27,15 +48,46 @@ const Home = () => {
         }
     }, []);
 
-    const getUserReposFromBackend = async () => {
+    const getUserReposFromBackend = async (page: number) => {
         const access_token = localStorage.getItem('token');
-        const response = await axios.get(`http://localhost:5000/allrepos/${access_token}`);
-        console.log(response, "repos");
+        const response = await axios.get(`http://localhost:5000/allrepos/${access_token}/${page}`);
+        if (response.status === 200) {
+            const newRepositories = repos.concat(response?.data?.repositories);
+            setRepos(newRepositories);
+        }
     };
 
     useEffect(() => {
-        getUserReposFromBackend();
+        getUserReposFromBackend(page);
+    }, [page]);
+
+    const handleObserver = (entities: any) => {
+        console.log("Executing", entities[0]);
+        const target = entities[0];
+        console.log(target, "ta");
+        if (target.isIntersecting) {
+            setPage((page) => page + 1);
+        }
+    };
+
+    useEffect(() => {
+
+        var options = {
+            root: null,
+            rootMargin: "50px",
+            threshold: 1.0
+        };
+        // initialize IntersectionObserver
+        // and attaching to Load More div
+        const observer = new IntersectionObserver(handleObserver, options);
+        console.log("Main is running", observer, loader.current, "");
+        if (loader.current) {
+            observer.observe(loader.current);
+        }
     }, []);
+
+
+    console.log({ page, repos, user }, "h");
 
     return (
         <div>
@@ -43,6 +95,26 @@ const Home = () => {
             <div>
                 <button onClick={() => localStorage.clear()}>Logout</button>
             </div>
+            {
+                repos.map((onerepo: Repo, index: number) => {
+                    return (
+                        <div key={index} style={{ border: '1px solid red' }}>
+                            <div>Descriptiion: {onerepo.description}</div>
+                            <div>Name: {onerepo.name} </div>
+                            <div> Visibility{onerepo.visibility} </div>
+                            <div> Stars: {onerepo.stargazers_count}</div>
+                            <div> Watchers: {onerepo.watchers_count} </div>
+                            <div><button onClick={() => console.log("edit is clicked")}>Edit Repo</button></div>
+                        </div>
+                    );
+                })
+            }
+            {
+                repos.length === (user.public_repos) ? (<h2>No more repos to show</h2>) : (
+                    <div className="loading" ref={loader}>
+                        <h2>Load More</h2>
+                    </div>)
+            }
         </div>
     );
 };

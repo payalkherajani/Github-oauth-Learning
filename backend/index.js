@@ -49,10 +49,10 @@ app.get('/userinfo/:access_token', async (req, res) => {
     }
 })
 
-app.get('/allrepos/:access_token', async (req, res) => {
+app.get('/allrepos/:access_token/:page', async (req, res) => {
     try {
-        const { access_token } = req.params
-        const response = await axios.get(`https://api.github.com/user/repos`, {
+        const { access_token, page } = req.params
+        const response = await axios.get(`https://api.github.com/user/repos?sort=updated&page=${page}&per_page=5`, {
             headers: {
                 Authorization: `token ${access_token}`,
             },
