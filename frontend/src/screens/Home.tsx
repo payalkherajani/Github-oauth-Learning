@@ -71,10 +71,9 @@ const Home = () => {
     };
 
     useEffect(() => {
-
         var options = {
             root: null,
-            rootMargin: "50px",
+            rootMargin: "20px",
             threshold: 1.0
         };
         // initialize IntersectionObserver
@@ -87,7 +86,7 @@ const Home = () => {
     }, []);
 
 
-    console.log({ page, repos, user }, "h");
+    // console.log({ page, repos, user }, "h");
 
     return (
         <div>
