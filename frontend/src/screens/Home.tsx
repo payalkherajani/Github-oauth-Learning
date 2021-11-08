@@ -1,6 +1,7 @@
 import axios from 'axios';
 import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router';
+import { Modal } from '../components';
 
 
 export type Repo = {
@@ -26,7 +27,10 @@ const Home = () => {
     });
     const [repos, setRepos] = useState([]);
     const [page, setPage] = useState(1);
+    const [showEditModal, setEditModal] = useState(false);
+    const [singleSelectedRepoDetails, setSingleSelectedRepoDetails] = useState({});
     const loader = useRef(null);
+
 
 
     const navigate = useNavigate();
@@ -62,9 +66,7 @@ const Home = () => {
     }, [page]);
 
     const handleObserver = (entities: any) => {
-        console.log("Executing", entities[0]);
         const target = entities[0];
-        console.log(target, "ta");
         if (target.isIntersecting) {
             setPage((page) => page + 1);
         }
@@ -79,14 +81,20 @@ const Home = () => {
         // initialize IntersectionObserver
         // and attaching to Load More div
         const observer = new IntersectionObserver(handleObserver, options);
-        console.log("Main is running", observer, loader.current, "");
         if (loader.current) {
             observer.observe(loader.current);
         }
     }, []);
 
+    const editRepoInfo = (repoDetails: Repo) => {
+        setEditModal(true);
+        setSingleSelectedRepoDetails(repoDetails);
+    };
 
-    // console.log({ page, repos, user }, "h");
+    const handleCloseModal = () => {
+        setEditModal(false);
+    };
+
 
     return (
         <div>
@@ -103,7 +111,7 @@ const Home = () => {
                             <div> Visibility{onerepo.visibility} </div>
                             <div> Stars: {onerepo.stargazers_count}</div>
                             <div> Watchers: {onerepo.watchers_count} </div>
-                            <div><button onClick={() => console.log("edit is clicked")}>Edit Repo</button></div>
+                            <div><button onClick={() => editRepoInfo(onerepo)}>Edit Repo</button></div>
                         </div>
                     );
                 })
@@ -113,6 +121,14 @@ const Home = () => {
                     <div className="loading" ref={loader}>
                         <h2>Load More</h2>
                     </div>)
+            }
+            {
+                showEditModal && (
+                    <Modal
+                        closeModalFunction={handleCloseModal}
+                        repoInfo={singleSelectedRepoDetails}
+                    />
+                )
             }
         </div>
     );
