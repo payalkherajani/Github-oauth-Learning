@@ -1,29 +1,21 @@
 import axios from 'axios';
-import React, { useEffect, useState, useRef } from 'react';
-import { useNavigate } from 'react-router';
-import { Modal } from '../components';
+import { useEffect, useState, useRef } from 'react';
+import { GET_ALL_LOGGED_IN_USER_REPOS, LOGGED_IN_USER_DETAILS, SELECTED_REPO } from '../constants/Constants';
+import { useAppContext } from '../context/Context';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import { Navigate, Link } from 'react-router-dom';
+import { Button, Typography } from '@mui/material';
+import dateformat from 'dateformat';
+import { Box } from '@mui/material';
 
-
-export type Repo = {
-    id: number;
-    description: string | null;
+export type RepoInfo = {
     name: string;
-    private: boolean;
-    visibility: string;
-    stargazers_count: number;
-    watchers_count: number;
-    node_id: string;
+    created_at: string;
+    html_url: string;
+    id: number;
+    description: string;
 };
-
-export type User = {
-    public_repos: number;
-    total_private_repos: number;
-};
-
-const divStyle = {
-
-};
-
 
 const containerStyle = {
     maxWidth: '1280px',
@@ -32,43 +24,34 @@ const containerStyle = {
 
 const Home = () => {
 
-    const [user, setUser] = useState<User>({
-        public_repos: 0,
-        total_private_repos: 0
-    });
     const [repos, setRepos] = useState([]);
     const [page, setPage] = useState(1);
-    const [showEditModal, setEditModal] = useState(false);
-    const [singleSelectedRepoDetails, setSingleSelectedRepoDetails] = useState({});
+
     const loader = useRef(null);
 
-
-
-    const navigate = useNavigate();
+    const { state, dispatch } = useAppContext();
 
     const getUserInfoFromBackend = async () => {
         const access_token = localStorage.getItem('token');
         const response = await axios.get(`http://localhost:5000/userinfo/${access_token}`);
         if (response.status === 200) {
             const { data: { userInfo } } = response;
-            setUser(userInfo); // transfer this to global state in reducer and call dispatch
+            dispatch({ type: LOGGED_IN_USER_DETAILS, payload: { userDetails: userInfo } });
         }
     };
 
     useEffect(() => {
-        if (localStorage.getItem('token') === null) {
-            navigate('/');
-        } else {
-            getUserInfoFromBackend();
-        }
+        getUserInfoFromBackend();
     }, []);
+
+
 
     const getUserReposFromBackend = async (page: number) => {
         const access_token = localStorage.getItem('token');
         const response = await axios.get(`http://localhost:5000/allrepos/${access_token}/${page}`);
         if (response.status === 200) {
             const newRepositories = repos.concat(response?.data?.repositories);
-            setRepos(newRepositories);
+            dispatch({ type: GET_ALL_LOGGED_IN_USER_REPOS, payload: { repos: newRepositories } });
         }
     };
 
@@ -97,58 +80,71 @@ const Home = () => {
         }
     }, []);
 
-    const editRepoInfo = (repoDetails: Repo) => {
-        setEditModal(true);
-        setSingleSelectedRepoDetails(repoDetails);
-    };
-
-    const handleCloseModal = () => {
-        setEditModal(false);
-    };
-
-    console.log("hello");
 
 
     return (
-        <div style={containerStyle}>
-            Home
-            <div>
-                <button onClick={() => localStorage.clear()}>Logout</button>
+
+        localStorage.getItem('token') === null ? (
+            <Navigate to='/' />
+        ) : (
+
+            <div style={containerStyle}>
+
+                <h2 style={{ textAlign: 'center', marginBottom: '1rem', marginTop: '1rem' }}>Home </h2>
+
+                <Box>
+                    {
+                        state.userRepositories.map((onerepo: RepoInfo, index: number) => {
+
+                            return (
+                                <Link to={{
+                                    pathname: `/repo/${onerepo.name}`,
+                                }}
+                                    onClick={() => dispatch({ type: SELECTED_REPO, payload: { repoInfo: onerepo } })}
+                                    key={onerepo.id}
+                                >
+
+                                    <Card
+                                        sx={{ minWidth: 275, marginBottom: '1rem', padding: '1rem', backgroundColor: '#FEF2F2', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}
+                                        key={onerepo.id}
+                                    >
+                                        <CardContent>
+
+                                            <Typography sx={{ marginBottom: '1rem' }}>
+                                                <strong style={{ display: 'inline' }}>Name: </strong>
+                                                <span>{onerepo.name} </span>
+                                            </Typography>
+
+                                            <Typography sx={{ marginBottom: '1rem' }}>
+                                                <strong style={{ display: 'inline' }}>Created Date: </strong>
+                                                <span>{dateformat(onerepo.created_at, "fullDate")}</span>
+                                            </Typography>
+
+                                            <Typography sx={{ marginBottom: '1rem' }}>
+                                                <strong style={{ display: 'inline' }}>Github Repo Link: </strong>
+                                                <a href={onerepo.html_url} target='_blank'>
+                                                    <Button>Open</Button>
+                                                </a>
+                                            </Typography>
+
+                                        </CardContent>
+
+                                    </Card>
+                                </Link>
+                            );
+                        })
+                    }
+                </Box>
+
+
+                <div className="loading" ref={loader}>
+                    <h2>Load More</h2>
+                </div>
+
             </div>
-            {
-                repos.map((onerepo: Repo, index: number) => {
-                    return (
-                        <div key={index} style={{
-                            color: 'blue', height: '250px', textAlign: 'center',
-                            padding: '5px 10px',
-                            background: '#eee',
-                            marginTop: '15px'
-                        }}>
-                            <div>Descriptiion: {onerepo.description}</div>
-                            <div>Name: {onerepo.name} </div>
-                            <div> Visibility{onerepo.visibility} </div>
-                            <div> Stars: {onerepo.stargazers_count}</div>
-                            <div> Watchers: {onerepo.watchers_count} </div>
-                            <div><button onClick={() => editRepoInfo(onerepo)}>Edit Repo</button></div>
-                        </div>
-                    );
-                })
-            }
-            {
-                repos.length === (user.public_repos) ? (<h2>No more repos to show</h2>) : (
-                    <div className="loading" ref={loader}>
-                        <h2>Load More</h2>
-                    </div>)
-            }
-            {
-                showEditModal && (
-                    <Modal
-                        closeModalFunction={handleCloseModal}
-                        repoInfo={singleSelectedRepoDetails}
-                    />
-                )
-            }
-        </div>
+        )
+
+
     );
 };
 

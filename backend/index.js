@@ -72,7 +72,6 @@ app.patch('/updaterepo/:access_token', async (req, res) => {
     try {
         const { access_token } = req.params
         const { repo, owner, name, description } = req.query
-        // console.log(req.query, req.params)
         const response = await axios.patch(`https://api.github.com/repos/${owner}/${repo}`,
             {
                 "name": name,
@@ -85,7 +84,7 @@ app.patch('/updaterepo/:access_token', async (req, res) => {
                 },
             }
         )
-        // console.log(response, "res")
+
         if (response.status === 200) {
             const { data } = response
             return res.status(200).json({ success: false, message: 'Success' })

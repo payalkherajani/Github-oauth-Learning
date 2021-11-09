@@ -1,10 +1,17 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogTitle from '@mui/material/DialogTitle';
+import { useNavigate } from 'react-router';
 
 const Modal = (props: any) => {
 
-    const { repoInfo } = props;
-    console.log(repoInfo, "o");
+    const { repoInfo, open, handleClose } = props;
+    const navigate = useNavigate();
+
 
 
     const [repoDetails, setRepoDetails] = useState({
@@ -21,7 +28,8 @@ const Modal = (props: any) => {
         const owner = repoInfo?.owner?.login;
         const response = await axios.patch(`http://localhost:5000/updaterepo/${access_token}?owner=${owner}&repo=${repo}&name=${name}&description=${description}`);
         if (response.status === 200) {
-            console.log(response);
+            handleClose();
+            navigate('/home');
         }
     };
 
@@ -31,27 +39,64 @@ const Modal = (props: any) => {
     };
 
 
-
     return (
-        <form onSubmit={handleOnSubmit}>
-            <input
-                type="text"
-                value={description}
-                name="description"
-                onChange={onChangeHandler}
-                placeholder="Description"
-            />
 
-            <input
-                type="text"
-                value={name}
-                name="name"
-                onChange={onChangeHandler}
-                placeholder="Name"
-            />
-            <button type="submit">Update</button>
-        </form>
+        <Dialog open={open} onClose={handleClose}>
+            <DialogTitle>Edit Details</DialogTitle>
+
+            <form style={{ padding: '1rem' }}>
+                <TextField
+                    type="text"
+                    value={description}
+                    name="description"
+                    onChange={onChangeHandler}
+                    placeholder="Description"
+                    label="Description"
+                    fullWidth
+                    variant="standard"
+                    margin="dense"
+                    sx={{ padding: '1rem' }}
+                />
+
+                <TextField
+                    type="text"
+                    value={name}
+                    name="name"
+                    onChange={onChangeHandler}
+                    placeholder="Name"
+                    label="Name"
+                    fullWidth
+                    variant="standard"
+                    margin="dense"
+                    sx={{ padding: '1rem' }}
+                />
+            </form>
+            <DialogActions>
+                <Button onClick={handleClose}>Cancel</Button>
+                <Button onClick={handleOnSubmit}>Submit</Button>
+            </DialogActions>
+        </Dialog>
     );
 };
 
 export default Modal;
+
+
+{/* <form onSubmit={handleOnSubmit}>
+<input
+    type="text"
+    value={description}
+    name="description"
+    onChange={onChangeHandler}
+    placeholder="Description"
+/>
+
+<input
+    type="text"
+    value={name}
+    name="name"
+    onChange={onChangeHandler}
+    placeholder="Name"
+/>
+<button type="submit">Update</button>
+</form> */}

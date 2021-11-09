@@ -10,14 +10,16 @@ export const CustomContext = createContext({} as ContextValue);
 
 
 const initialState: StateType = {
-    user: {
-        isLoggedIn: false,
-        name: '',
-        avatar: ''
-    },
+    isUserLoggedIn: false,
+    userDetails: {},
     isLoading: false,
     userRepositories: [],
-    selectedRepository: {}
+    selectedRepository: {
+        name: '',
+        created_at: '',
+        html_url: '',
+        description: ''
+    }
 };
 
 export const Provider: React.FC = ({ children }): JSX.Element => {
