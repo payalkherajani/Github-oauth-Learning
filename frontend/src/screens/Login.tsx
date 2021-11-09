@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import GithubIcon from "mdi-react/GithubIcon";
 import { useLocation, useNavigate } from 'react-router';
 import axios from 'axios';
+import { Button, Box } from '@mui/material';
 
 
 function useQuery() {
@@ -45,16 +46,35 @@ const Login = () => {
     }, [data]);
 
     return (
-        <div>
+        <Box
+            sx={{
+                display: 'flex',
+                flexDirection: 'row',
+                p: 1,
+                m: 1,
+                bgcolor: 'background.paper',
+                justifyContent: 'center',
+                alignItems: 'center',
+                minHeight: '80vh'
+            }}
+        >
             <a
                 className="login-link"
                 href={`https://github.com/login/oauth/authorize?scope=repo,user&client_id=${process.env.REACT_APP_CLIENT_ID}&redirect_uri=${process.env.REACT_APP_REDIRECT_URI}`}
                 onClick={() => setData({ ...data, status: 'In-Process' })}
+                style={{ textDecoration: 'none' }}
             >
-                <GithubIcon />
-                <span>Login with GitHub</span>
+                <Button
+                    variant="contained"
+                    startIcon={<GithubIcon />}
+                    sx={{ background: 'black' }}
+                >
+                    Login with GitHub
+                </Button>
+
+                <span></span>
             </a>
-        </div>
+        </Box>
     );
 };
 
