@@ -42,7 +42,14 @@ export const reducer = (state: StateType, action: ActionType): StateType => {
             return { ...state, isUserLoggedIn: true };
 
         case LOGOUT:
-            return { ...state, isUserLoggedIn: false };
+            return {
+                ...state, isUserLoggedIn: false, userRepositories: [], selectedRepository: {
+                    name: '',
+                    created_at: '',
+                    html_url: '',
+                    description: ''
+                }, userDetails: {}
+            };
 
         case LOGGED_IN_USER_DETAILS:
             return { ...state, userDetails: action.payload.userDetails };

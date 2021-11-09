@@ -58,11 +58,12 @@ const Login = () => {
                     p: 1,
                     m: 1,
                     bgcolor: 'background.paper',
-                    justifyContent: 'center',
+                    justifyContent: 'space-evenly',
                     alignItems: 'center',
                     minHeight: '80vh'
                 }}
             >
+                <img src="/assets/github.svg" alt="github-image" style={{ width: '50%', height: '200px' }} />
                 <a
                     className="login-link"
                     href={`https://github.com/login/oauth/authorize?scope=repo,user&client_id=${process.env.REACT_APP_CLIENT_ID}&redirect_uri=${process.env.REACT_APP_REDIRECT_URI}`}
@@ -76,9 +77,8 @@ const Login = () => {
                     >
                         Login with GitHub
                     </Button>
-
-                    <span></span>
                 </a>
+
             </Box>
         )
 

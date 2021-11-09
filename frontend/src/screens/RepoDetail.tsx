@@ -34,16 +34,13 @@ const RepoDetail = () => {
 
     return (
         <Box sx={{ minHeight: '80vh' }}>
-            <Button
-                variant="contained"
-                onClick={() => navigate('/home')}
-                sx={{
-                    marginLeft: '3rem'
-                }}
-            >Back
-            </Button>
-            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '1rem', flexDirection: 'column' }}>
-                <h2>Repository Information</h2>
+
+            <h2 style={{ textAlign: 'center', marginTop: '2rem', marginBottom: '2rem' }}>Repository Information</h2>
+
+            <Box sx={{ display: 'flex', justifyContent: 'space-evenly', alignItems: 'center', gap: '1rem' }}>
+
+                <img src="/assets/form.svg" alt="github-image" style={{ width: '50%', height: '200px' }} />
+
                 <Card
                     sx={{ minWidth: 275, marginBottom: '1rem', padding: '1rem', backgroundColor: '#FEF2F2' }}>
                     <CardContent>
@@ -69,6 +66,15 @@ const RepoDetail = () => {
                                 <Button>Open</Button>
                             </a>
                         </Typography>
+
+                        <Button
+                            variant="contained"
+                            onClick={() => navigate('/home')}
+                            sx={{
+                                marginRight: '3rem'
+                            }}
+                        >Back
+                        </Button>
 
                         <Button
                             variant="contained"

@@ -18,7 +18,7 @@ export type RepoInfo = {
 };
 
 const containerStyle = {
-    maxWidth: '1280px',
+    maxWidth: '1000px',
     margin: '0 auto',
 };
 
@@ -105,10 +105,13 @@ const Home = () => {
                                 >
 
                                     <Card
-                                        sx={{ minWidth: 275, marginBottom: '1rem', padding: '1rem', backgroundColor: '#FEF2F2', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}
+                                        sx={{ minWidth: 275, marginBottom: '1rem', padding: '1rem', backgroundColor: '#FEF2F2', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
                                         key={onerepo.id}
                                     >
-                                        <CardContent>
+                                        <img src="/assets/coder.svg" alt="github-image" style={{ width: '50%', height: '200px' }} />
+                                        <CardContent sx={{
+                                            display: 'flex', flexDirection: 'column'
+                                        }}>
 
                                             <Typography sx={{ marginBottom: '1rem' }}>
                                                 <strong style={{ display: 'inline' }}>Name: </strong>
