@@ -6,6 +6,7 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogTitle from '@mui/material/DialogTitle';
 import { useNavigate } from 'react-router';
+import { SERVER_URL } from '../config';
 
 const Modal = (props: any) => {
 
@@ -26,7 +27,7 @@ const Modal = (props: any) => {
         const access_token = localStorage.getItem('token');
         const repo = repoInfo?.name;
         const owner = repoInfo?.owner?.login;
-        const response = await axios.patch(`http://localhost:5000/updaterepo/${access_token}?owner=${owner}&repo=${repo}&name=${name}&description=${description}`);
+        const response = await axios.patch(`${SERVER_URL}/updaterepo/${access_token}?owner=${owner}&repo=${repo}&name=${name}&description=${description}`);
         if (response.status === 200) {
             handleClose();
             navigate('/home');

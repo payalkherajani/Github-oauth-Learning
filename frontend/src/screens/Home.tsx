@@ -8,6 +8,8 @@ import { Navigate, Link } from 'react-router-dom';
 import { Button, Typography } from '@mui/material';
 import dateformat from 'dateformat';
 import { Box } from '@mui/material';
+import { SERVER_URL } from '../config';
+
 
 export type RepoInfo = {
     name: string;
@@ -33,7 +35,7 @@ const Home = () => {
 
     const getUserInfoFromBackend = async () => {
         const access_token = localStorage.getItem('token');
-        const response = await axios.get(`http://localhost:5000/userinfo/${access_token}`);
+        const response = await axios.get(`${SERVER_URL}/userinfo/${access_token}`);
         if (response.status === 200) {
             const { data: { userInfo } } = response;
             dispatch({ type: LOGGED_IN_USER_DETAILS, payload: { userDetails: userInfo } });
@@ -48,7 +50,7 @@ const Home = () => {
 
     const getUserReposFromBackend = async (page: number) => {
         const access_token = localStorage.getItem('token');
-        const response = await axios.get(`http://localhost:5000/allrepos/${access_token}/${page}`);
+        const response = await axios.get(`${SERVER_URL}/allrepos/${access_token}/${page}`);
         if (response.status === 200) {
             const newRepositories = repos.concat(response?.data?.repositories);
             dispatch({ type: GET_ALL_LOGGED_IN_USER_REPOS, payload: { repos: newRepositories } });

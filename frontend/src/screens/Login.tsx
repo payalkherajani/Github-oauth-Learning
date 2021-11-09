@@ -6,6 +6,7 @@ import { Button, Box } from '@mui/material';
 import { useAppContext } from '../context/Context';
 import { LOGIN_SUCCESS } from '../constants/Constants';
 import { Navigate } from 'react-router-dom';
+import { SERVER_URL } from '../config';
 
 
 function useQuery() {
@@ -28,7 +29,7 @@ const Login = () => {
 
     const loginUserFromBackend = async (code: string) => {
 
-        const response = await axios.post('http://localhost:5000/authenticate', {
+        const response = await axios.post(`${SERVER_URL}/authenticate`, {
             'code': code
         });
 
